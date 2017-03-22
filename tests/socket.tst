@@ -554,9 +554,11 @@ T
 T
 (open-stream-p (setq *socket-1* (socket:socket-connect
                                  12345 "localhost" :timeout 0))) T
-(check-os-error (read-line *socket-1*)
-  #-win32 (:ECONNREFUSED #.+econnrefused+)
+;; cygwin waits here
+#-cygwin (check-os-error (read-line *socket-1*)
+  #-win32 (:ECONNREFUSED #+macos 61 #-macos #.+econnrefused+)
   #+win32 (:EINPROGRESS 10036))
+#+cygwin T
 T
 (close *socket-1*) T
 
